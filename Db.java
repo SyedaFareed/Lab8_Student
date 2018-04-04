@@ -5,11 +5,14 @@
  */
 package lab8_student;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Random;
+import java.util.concurrent.Callable;
 
 /**
  *
@@ -19,6 +22,7 @@ public class Db {
     Connection con= null;
     Statement stmt= null;
     PreparedStatement preps= null;
+    CallableStatement cstmt= null;
     Random rand;
     
     Db(){
@@ -160,5 +164,54 @@ public class Db {
       }//end finally try
     }   //end function    
     
+public void insert_call(Boolean x){
+    try{ 
+        con.setAutoCommit(x);
+
+        int  regno = 0;
+
+        String sql= "{CALL `lab8_student`.`insert`(?, ?)}";
+
+        //String sql = "{call `lab8_student`.'insert' (?, ?)}";
+        cstmt = con.prepareCall(sql);
+
+        for(int i=0; i<5000; i++){
+            regno = rand.nextInt(5000) + 1;  
+            //Bind IN the two parameters
+            cstmt.setInt(1, regno); 
+            cstmt.setString(2, "a"+regno); 
+            cstmt.execute();        
+        }
+        
+        if(x==false)
+            con.commit();
+        
+        cstmt.close();
+        con.close();
+
+    }catch(SQLException se){
+      //Handle errors for JDBC
+      se.printStackTrace();
+   }catch(Exception e){
+      //Handle errors for Class.forName
+      e.printStackTrace();
+   }finally{
+        //finally block used to close resources
+        try{
+        if (cstmt!=null) {
+            cstmt.close();
+        }}catch(SQLException se2){
+      }// nothing we can do
+      try{
+         if(con!=null)
+            con.close();
+      }catch(SQLException se){
+         se.printStackTrace();
+      }//end finally try
+}
+   }    //end function insert_call
+    
+    
+
 
 }

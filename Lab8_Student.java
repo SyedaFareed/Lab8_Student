@@ -24,10 +24,13 @@ public class Lab8_Student {
         //d.insert_stmt(true);
         
         //d.insert_preps(false);
-        d.insert_preps(true);
+        //d.insert_preps(true);
         
         //d.insert_batch(false);
         //d.insert_batch(true);
+        
+        //d.insert_call(false);
+        d.insert_call(true);
     }
     
 }
